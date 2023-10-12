@@ -1,0 +1,149 @@
+MDScreenManager:
+    MainScreen:
+    MusicScreen:
+    WorkoutScreen:
+
+<MainScreen>
+    name: "main"
+    size: root.width, root.height
+
+    MDFlatButton:
+        text: "Music"
+        pos_hint: {"center_x": 0.1, "center_y": 0.95}
+        on_press: root.manager.current = "music"
+
+    MDFlatButton:
+        text: "Workout"
+        pos_hint: {"center_x": 0.1, "center_y": 0.875}
+        on_press: root.manager.current = "workout"
+
+
+
+<MusicScreen>:
+
+    name: "music"
+    size: root.width, root.height
+    #:set play_bar 0.3
+
+    music_time: music_progress_bar
+
+    Image:
+        id: image_outline
+        source: "null/null.png"
+        pos_hint: {"center_x": 0.5, "center_y": 0.7}
+        size_hint_y: None
+        size_hint_x: None
+        allow_stretch: True
+        width: 240
+        height: 240
+
+    Image:
+        id: cover_image
+        source: "null/null.png"
+        pos_hint: {"center_x": 0.5, "center_y": 0.7}
+
+
+    # song label
+    Label:
+        id: song_label
+        text: ""
+        font_size: 14
+        pos_hint: {"center_x": 0.5, "center_y": 0.4375}
+
+
+    # screen changer to home
+    MDFlatButton:
+        text: "Home"
+        pos_hint: {"center_x": 0.1, "center_y": 0.95}
+        on_press: root.manager.current = "main"
+        icon: "home"
+
+
+    # play/pause Button
+    MDIconButton:
+        id: play_pause
+        name: "Play"
+        pos_hint: {"center_x": 0.5, "center_y": play_bar}
+        icon: "play"
+        icon_size: "32sp"
+        # on_press: root.check_loop()
+        on_press: root.toggle_play(play_pause)
+
+
+    # skip back button
+    MDIconButton:
+        pos_hint: {"center_x": 0.36, "center_y": play_bar}
+        icon: "skip-backward"
+        icon_size: "24sp"
+        on_press: root.skip_back()
+
+
+    # skip forward button
+    MDIconButton:
+        pos_hint: {"center_x": 0.64, "center_y": play_bar}
+        icon: "skip-forward"
+        icon_size: "24sp"
+        on_press: root.skip_forward()
+
+
+
+    # Volume slider
+    MDSlider:
+        id: volume_slider
+        min: 0
+        max: 1
+        value: 0.5
+        pos_hint: {"center_x": 0.5, "center_y": 0.38}
+        size_hint_y: None
+        height: 20
+        size_hint_x: None
+        width: 200
+        hint: False
+        on_value: root.volume(volume_slider.value)
+
+    # music time slider/progress bar
+    MDSlider:
+        id: music_progress_bar
+        min: 0
+        max: 1
+        value: 0
+        pos_hint: {"center_x": 0.5, "center_y": 0.225}
+        size_hint_y: None
+        height: 20
+        size_hint_x: None
+        width: 300
+        hint: False
+        on_touch_down: if self.collide_point(*args[1].pos): root.dont_update = True
+        on_touch_up: if self.collide_point(*args[1].pos): root.dont_update = False
+        on_touch_up: if self.collide_point(*args[1].pos): root.music_pos(music_progress_bar.value)
+        # bugs where volume triggers on_touch_up, maybe something to do with kivy sending signal to all widgets
+
+    # music time
+    Label:
+        id: time_in_sec
+        text: ""
+        pos_hint: {"center_x": 0.5, "center_y": 0.15}
+
+
+<WorkoutScreen>
+    name: "workout"
+
+    # screen changer to home
+    MDFlatButton:
+        text: "Home"
+        pos_hint: {"center_x": 0.1, "center_y": 0.95}
+        on_press: root.manager.current = "main"
+        icon: "home"
+
+
+    Label
+        text: "Workout"
+        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+
+
+<MusicDownScreen>
+    name: "music_down"
+
+    MDTextField:
+        hint_text: "Rectangle mode"
+        mode: "rectangle"
